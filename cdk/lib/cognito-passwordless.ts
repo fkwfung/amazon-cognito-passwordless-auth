@@ -22,6 +22,7 @@ export class Passwordless extends Construct {
   userPool: cdk.aws_cognito.UserPool;
   userPoolClients?: cdk.aws_cognito.UserPoolClient[];
   secretsTable?: cdk.aws_dynamodb.Table;
+  secretsOtpTable?: cdk.aws_dynamodb.Table;
   authenticatorsTable?: cdk.aws_dynamodb.Table;
   kmsKey?: cdk.aws_kms.IKey;
   createAuthChallengeFn: cdk.aws_lambda.IFunction;
@@ -153,6 +154,22 @@ export class Passwordless extends Construct {
         secondsUntilExpiry?: cdk.Duration;
         minimumSecondsBetween?: cdk.Duration;
         autoConfirmUsers?: boolean;
+      };
+      /**
+       * Enable sign-in with Magic Links by providing this config object
+       * Make sure you've moved out of the SES sandbox, otherwise you can only send few e-mails,
+       * and only from and to verified e-mail addresses: https://docs.aws.amazon.com/ses/latest/dg/request-production-access.html
+       */
+      emailOtp?: {
+        /** The length of the email OTP code */
+        otpLength?: number;
+        /** The e-mail address you want to use as the FROM address of the email OTP code e-mails */
+        sesFromAddress: string;
+        /** The AWS region you want to use Amazon SES from. Use this to specify a different region where you're no longer in the SES sandbox */
+        sesRegion?: string;
+        secretsTableProps?: TableProps;
+        secondsUntilExpiry?: cdk.Duration;
+        minimumSecondsBetween?: cdk.Duration;
       };
       /**
        * Enable SMS OTP Step Up authentication by providing this config object.
