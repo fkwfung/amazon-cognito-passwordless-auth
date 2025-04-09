@@ -17,6 +17,7 @@ import { VerifyAuthChallengeResponseTriggerHandler } from "aws-lambda";
 import * as fido2 from "./fido2.js";
 import * as smsOtpStepUp from "./sms-otp-stepup.js";
 import * as magicLink from "./magic-link.js";
+import * as emailOtp from "./email-otp.js";
 import { logger, UserFacingError } from "./common.js";
 
 export const handler: VerifyAuthChallengeResponseTriggerHandler = async (
@@ -40,6 +41,8 @@ export const handler: VerifyAuthChallengeResponseTriggerHandler = async (
       event.request.clientMetadata?.signInMethod === "SMS_OTP_STEPUP"
     ) {
       await smsOtpStepUp.addChallengeVerificationResultToEvent(event);
+    } else if (event.request.clientMetadata?.signInMethod === "EMAIL_OTP_CODE") {
+      await emailOtp.addChallengeVerificationResultToEvent(event);
     }
 
     // Return event
